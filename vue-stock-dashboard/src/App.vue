@@ -70,18 +70,20 @@ const login = () => {
     return alert('플레이어 이름을 입력하세요')
   }
 
-  // ✅ 존재하는 플레이어만 접속 허용
-  const exists = players.value.find(player => player.name === trimmedName)
+  // 존재하는 플레이어인지 확인
+  const exists = players.value.find(player => player.playerId === trimmedName)
+
   if (!exists) {
     return alert('존재하지 않는 플레이어입니다.')
   }
 
   // 접속 허용
-  playerId.value = trimmedName
+  playerId.value = exists.playerId
   alert(`${playerId.value}님 접속 완료!`)
   loadData()
   inputPlayerId.value = ''
 }
+
 onMounted(loadData)
 </script>
 
