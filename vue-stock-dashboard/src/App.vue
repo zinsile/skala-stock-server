@@ -1,28 +1,42 @@
 <template>
-  <main class="p-4">
-    <h1 class="text-2xl font-bold mb-4">
-      📈 Skala 주식 거래 <span v-if="playerId">- 👤 {{ playerId }}님 접속 중</span>
-    </h1>
+  <main class="p-6 bg-gray-50 min-h-screen">
+    <div class="max-w-7xl mx-auto">
+      <!-- 헤더 섹션 -->
+      <header class="mb-8 bg-white p-6 rounded-lg shadow-sm flex justify-between items-center">
+        <h1 class="text-3xl font-bold text-gray-800">
+          📈 Skala 주식 거래 <span v-if="playerId" class="text-blue-600">- 👤 {{ playerId }}님 접속 중</span>
+        </h1>
+        
+        <div class="flex space-x-2">
+          <input
+            v-model="inputPlayerId"
+            placeholder="플레이어 이름 입력"
+            class="border border-gray-300 p-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+          />
+          <button @click="login" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors duration-200 font-medium">
+            접속하기
+          </button>
+        </div>
+      </header>
 
-    <div class="mb-4">
-      <input
-        v-model="inputPlayerId"
-        placeholder="플레이어 이름 입력"
-        class="border p-2 rounded mr-2"
-      />
-      <button @click="login" class="bg-blue-500 text-white px-4 py-2 rounded">
-        접속하기
-      </button>
+      <!-- 메인 콘텐츠 영역: 3단 레이아웃 -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- 첫 번째 섹션: 주식 목록 -->
+        <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm">
+          <StockList
+            :stocks="stocks"
+            @buy="handleBuy"
+            @sell="handleSell"
+            @refresh="loadData"
+          />
+        </div>
+
+        <!-- 두 번째 섹션: 플레이어 목록 -->
+        <div class="bg-white p-6 rounded-lg shadow-sm">
+          <PlayerList :players="players" :key="JSON.stringify(players)" />
+        </div>
+      </div>
     </div>
-
-    <!-- key로 강제 갱신 유도 -->
-    <StockList
-      :stocks="stocks"
-      @buy="handleBuy"
-      @sell="handleSell"
-      @refresh="loadData"
-    />
-    <PlayerList :players="players" :key="JSON.stringify(players)" />
   </main>
 </template>
 
@@ -89,7 +103,31 @@ onMounted(loadData)
 
 <style>
 body {
-  font-family: sans-serif;
+  font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
   background-color: #f9fafb;
+  color: #1f2937;
+}
+
+button {
+  border-radius: 0.375rem;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+input {
+  transition: all 0.2s ease;
+}
+
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 </style>
