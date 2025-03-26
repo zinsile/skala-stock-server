@@ -65,12 +65,23 @@ const handleSell = async (player, stock, quantity) => {
 
 // ✅ 로그인
 const login = () => {
-  if (!inputPlayerId.value.trim()) return alert('플레이어 이름을 입력하세요')
-  playerId.value = inputPlayerId.value.trim()
+  const trimmedName = inputPlayerId.value.trim()
+  if (!trimmedName) {
+    return alert('플레이어 이름을 입력하세요')
+  }
+
+  // ✅ 존재하는 플레이어만 접속 허용
+  const exists = players.value.find(player => player.name === trimmedName)
+  if (!exists) {
+    return alert('존재하지 않는 플레이어입니다.')
+  }
+
+  // 접속 허용
+  playerId.value = trimmedName
   alert(`${playerId.value}님 접속 완료!`)
   loadData()
+  inputPlayerId.value = ''
 }
-
 onMounted(loadData)
 </script>
 

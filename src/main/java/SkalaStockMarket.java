@@ -213,7 +213,4 @@ public class SkalaStockMarket {
         stockRepository.addStock(name, price); // 종목 추가 + 저장
     }
     
-    
-
-
 }

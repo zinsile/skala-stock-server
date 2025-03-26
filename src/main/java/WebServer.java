@@ -1,5 +1,10 @@
-import static spark.Spark.*;
 import com.google.gson.Gson;
+
+import static spark.Spark.before;
+import static spark.Spark.get;
+import static spark.Spark.options;
+import static spark.Spark.port;
+import static spark.Spark.post;
 
 public class WebServer {
     static Gson gson = new Gson();
@@ -54,8 +59,6 @@ public class WebServer {
             market.addStock(name, price);  // ← stockRepository 통해 저장
             return "success";
         });
-        
-
     }
 
     private static void cors() {
