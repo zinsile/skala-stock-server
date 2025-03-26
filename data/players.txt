@@ -1,0 +1,6 @@
+skala1,464400,TechCorp:100:1000|HealthPlus:120:130|sk:2000:15|tesla:20000:20
+skala2,9000,TechCorp:100:10
+skala3,9400,HealthPlus:120:5
+skala4,9600,GreenEnergy:80:5
+test,99500,TechCorp:100:5
+siri,599760,GreenEnergy:80:3|tesla:20000:20

@@ -1,0 +1,5 @@
+TechCorp,100
+GreenEnergy,80
+HealthPlus,120
+sk,2000
+tesla,20000

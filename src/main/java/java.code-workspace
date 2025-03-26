@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "java",
+			"path": "../../../workspace/backend/java"
+		},
+		{
+			"name": "skala-stock-console",
+			"path": ".."
+		}
+	],
+	"settings": {}
+}
