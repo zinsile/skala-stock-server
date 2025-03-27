@@ -1,4 +1,10 @@
 /*
+ * <작성자>
+ * 진실
+ * 
+ * <최종 업데이트 날짜>
+ * 2025.03.27
+ * 
  * <클래스 개요>
  * 스칼라 주식 프로그램의 웹 서버를 구성하는 클래스 (Spark Java 사용)
  * 
@@ -81,6 +87,21 @@
              market.addStock(name, price);  // stockRepository 통해 저장
              return "success";
          });
+
+         post("/api/addMoney", (req, res) -> {
+            String playerId = req.queryParams("player");
+            int amount = Integer.parseInt(req.queryParams("amount"));
+            Player player = market.getPlayerById(playerId);
+            if (player != null) {
+                player.addMoney(amount);
+                market.savePlayers();
+                return "success";
+            } else {
+                res.status(404);
+                return "Player not found";
+            }
+        });
+
      }
  
      // 8. CORS 허용 설정 (모든 출처에서 접근 가능)

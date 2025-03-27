@@ -1,4 +1,10 @@
 /*
+ * <작성자>
+ * 진실
+ * 
+ * <최종 업데이트 날짜>
+ * 2025.03.27
+ * 
  * <클래스 개요>
  * 스칼라 주식 프로그램의 메인 실행 클래스
  * 
@@ -70,6 +76,17 @@
                      break;
                  case 3:
                      sellStock(scanner);
+                     break;
+                 case 4:
+                     System.out.print("추가할 금액 입력: ");
+                     int addAmount = scanner.nextInt();
+                     if (addAmount > 0) {
+                         player.addMoney(addAmount);
+                         System.out.println("현재 자금: " + player.getPlayerMoney());
+                         playerRepository.savePlayerList(); // 저장
+                     } else {
+                         System.out.println("0보다 큰 금액을 입력하세요.");
+                     }
                      break;
                  case 0:
                      System.out.println("프로그램을 종료합니다...Bye");
@@ -229,5 +246,16 @@
          stockRepository.loadStockList();
          stockRepository.addStock(name, price);
      }
+
+     // 특정 플레이어 반환
+    public Player getPlayerById(String playerId) {
+        playerRepository.loadPlayerList();
+        return playerRepository.findPlayer(playerId);
+    }
+
+    // 저장 메서드 노출
+    public void savePlayers() {
+        playerRepository.savePlayerList();
+    }
  }
  

@@ -1,4 +1,10 @@
 /*
+ * <작성자>
+ * 진실
+ * 
+ * <최종 업데이트 날짜>
+ * 2025.03.27
+ * 
  * <클래스 개요>
  * 게임 내 플레이어 정보를 관리하는 클래스
  * 
@@ -48,7 +54,14 @@
      public void setPlayerMoney(int money) {
          this.playerMoney = money;
      }
- 
+
+     // 투자금 추가 메서드
+    public void addMoney(int amount) {
+        if (amount > 0) {
+            this.playerMoney += amount;
+        }
+    }
+
      // 보유 주식 리스트 반환
      public ArrayList<PlayerStock> getPlayerStocks() {
          return this.playerStocks;

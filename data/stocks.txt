@@ -1,6 +1,5 @@
-TechCorp,100
-GreenEnergy,80
-HealthPlus,120
 sk,2000
 tesla,20000
-samsung,5000
+samsung,500
+lg,7000
+메롱,1000000
