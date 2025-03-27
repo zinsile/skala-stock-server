@@ -40,4 +40,3 @@ skala-stock-console/
 ├── gradlew.bat
 ├── settings.gradle
 └── README.md
-
