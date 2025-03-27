@@ -1,25 +1,7 @@
-/*
- * <작성자>
- * 진실
- * 
- * <최종 업데이트 날짜>
- * 2025.03.27
- * 
- * <클래스 개요>
- * 게임 내 플레이어 정보를 관리하는 클래스
- * 
- * - 플레이어 ID, 보유 자금, 보유 주식 목록을 관리
- * - 주식 추가, 수정, 삭제 기능 제공
- * 
- * 1. addStock(PlayerStock stock) : 주식을 보유 목록에 추가
- * 2. updatePlayerStock(PlayerStock stock) : 보유 주식 정보 갱신
- * 3. findStock(int index) : 인덱스로 주식 검색
- * 4. findStockByName(String stockName) : 이름으로 주식 검색
- * 5. getPlayerStocksForFile() : 파일 저장용 주식 문자열 반환
- * 6. getPlayerStocksForMenu() : 메뉴 출력용 주식 문자열 반환
- */
+package model;
 
- import java.util.ArrayList;
+
+import java.util.ArrayList;
 
  class Player {
      private String playerId;                            // 플레이어 ID

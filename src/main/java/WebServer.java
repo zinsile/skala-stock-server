@@ -23,7 +23,9 @@
 
  import com.google.gson.Gson;
 
- import static spark.Spark.before;
+import model.Player;
+
+import static spark.Spark.before;
  import static spark.Spark.get;
  import static spark.Spark.options;
  import static spark.Spark.port;

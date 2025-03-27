@@ -26,32 +26,27 @@
 
  import java.util.List;
  import java.util.Scanner;
+
+import model.Player;
+import model.Stock;
  
  public class SkalaStockMarket {
-     private PlayerRepository playerRepository = new PlayerRepository();  // 플레이어 저장소
-     private StockRepository stockRepository = new StockRepository();     // 주식 저장소
+     private final StockService stockService;
+     private final PlayerService playerService;
      private Player player = null;  // 현재 플레이어
  
      // 1. 프로그램 시작 및 메인 메뉴 루프
      public void start() {
          // 주식 및 플레이어 정보 로드
-         stockRepository.loadStockList();
-         playerRepository.loadPlayerList();
+         stockService.loadStock();
+         playerService.loadPlayer();
  
          Scanner scanner = new Scanner(System.in);
  
          System.out.print("플레이어 ID를 입력하세요: ");
          String playerId = scanner.nextLine();
-         player = playerRepository.findPlayer(playerId);
+         player = playerService.findPlayerByPlayerId(playerId);
  
-         // 신규 플레이어 등록
-         if (player == null) {
-             player = new Player(playerId);
-             System.out.print("초기 투자금을 입력하세요: ");
-             int money = scanner.nextInt();
-             player.setPlayerMoney(money);
-             playerRepository.addPlayer(player);
-         }
  
          displayPlayerStocks(); // 초기 보유 주식 출력
  
@@ -83,7 +78,7 @@
                      if (addAmount > 0) {
                          player.addMoney(addAmount);
                          System.out.println("현재 자금: " + player.getPlayerMoney());
-                         playerRepository.savePlayerList(); // 저장
+                         playerService.savePlayer(); // 저장
                      } else {
                          System.out.println("0보다 큰 금액을 입력하세요.");
                      }
@@ -112,7 +107,7 @@
      // 3. 주식 목록 출력
      private void displayStockList() {
          System.out.println("\n=== 주식 목록 ===");
-         System.out.println(stockRepository.getStockListForMenu());
+         System.out.println(stockService.getStockListForMenu());
      }
  
      // 4. 콘솔 입력 기반 주식 구매
@@ -123,7 +118,7 @@
          System.out.print("선택: ");
          int index = scanner.nextInt() - 1;
  
-         Stock selectedStock = stockRepository.findStock(index);
+         Stock selectedStock = stockService.findStockByIndex(index);
          if (selectedStock != null) {
              System.out.print("구매할 수량을 입력하세요: ");
              int quantity = scanner.nextInt();

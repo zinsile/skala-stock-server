@@ -1,3 +1,4 @@
+package model;
 /*
  * <작성자>
  * 진실

@@ -1,3 +1,4 @@
+package model;
 /*
  * <작성자>
  * 진실
@@ -19,6 +20,7 @@
  */
 
 // 클래스 상속
+
 class PlayerStock extends Stock {
     private int stockQuantity;  // 보유 주식 수량
 

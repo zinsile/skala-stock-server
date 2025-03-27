@@ -1,3 +1,4 @@
+package repository;
 /*
  * <작성자>
  * 진실
@@ -25,6 +26,8 @@
  import java.io.IOException;
  import java.util.ArrayList;
  import java.util.List;
+
+import model.Player;
  
  public class PlayerRepository {
  

@@ -1,3 +1,4 @@
+package repository;
 /*
  * <작성자>
  * 진실
@@ -28,6 +29,8 @@
  import java.io.IOException;
  import java.util.ArrayList;
  import java.util.List;
+
+ import model.Stock;
  
  public class StockRepository {
      // 주식 정보를 저장할 파일 (형식: "주식명,주가")
