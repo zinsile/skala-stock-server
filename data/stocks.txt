@@ -1,5 +1,7 @@
-sk,2000
-tesla,20000
-samsung,500
-lg,7000
-메롱,1000000
+skala,50000
+happy6team,5000
+princeung,19999999
+spring,1000
+vue,15000
+maerong,20000
+감사합니다,111111
