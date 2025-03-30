@@ -28,6 +28,7 @@ package repository;
  import java.util.List;
 
 import model.Player;
+import model.PlayerStock;
  
  public class PlayerRepository {
  

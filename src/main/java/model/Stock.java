@@ -20,7 +20,7 @@ package model;
  * 6. toString() : 주식 정보를 문자열로 반환 (name:price 형식)
  */
 
- class Stock {
+ public class Stock {
     String stockName;   // 주식 이름
     int stockPrice;     // 주식 가격
 
@@ -49,6 +49,7 @@ package model;
     }
 
     // 6. 주식 정보를 문자열로 반환 (예: name:price)
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(stockName);

@@ -1,4 +1,3 @@
-package model;
 /*
  * <작성자>
  * 진실
@@ -19,9 +18,11 @@ package model;
  * 5. toString() : 파일 저장 및 출력용 문자열 반환 (name:price:quantity)
  */
 
+ package model;
+
 // 클래스 상속
 
-class PlayerStock extends Stock {
+public class PlayerStock extends Stock {
     private int stockQuantity;  // 보유 주식 수량
 
     // 1. 주식 객체와 수량으로 생성자 구성 (Stock 상속 고려)
@@ -49,6 +50,7 @@ class PlayerStock extends Stock {
     }
 
     // 5. 주식 정보 문자열 반환 (name:price:quantity 형식)
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(super.toString()); // name:price
