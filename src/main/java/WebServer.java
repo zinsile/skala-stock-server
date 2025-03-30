@@ -23,6 +23,7 @@
 
  import com.google.gson.Gson;
 
+import controller.SkalaStockMarket;
 import model.Player;
 
 import static spark.Spark.before;

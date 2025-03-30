@@ -1,3 +1,4 @@
+package controller;
 /*
  * <작성자>
  * 진실
@@ -11,7 +12,6 @@
  * - 콘솔 기반 UI로 플레이어 주식 거래를 처리
  * - PlayerRepository 및 StockRepository와 연동
  * 
- * 1. start() : 프로그램 시작 및 메인 메뉴 루프
  * 2. displayPlayerStocks() : 플레이어의 보유 주식 목록 출력
  * 3. displayStockList() : 전체 주식 목록 출력
  * 4. buyStock(Scanner) : 콘솔 입력 기반 주식 구매
@@ -29,71 +29,19 @@
 
 import model.Player;
 import model.Stock;
+import service.PlayerService;
+import service.StockService;
+import model.PlayerStock;
+
  
  public class SkalaStockMarket {
      private final StockService stockService;
      private final PlayerService playerService;
      private Player player = null;  // 현재 플레이어
- 
-     // 1. 프로그램 시작 및 메인 메뉴 루프
-     public void start() {
-         // 주식 및 플레이어 정보 로드
-         stockService.loadStock();
-         playerService.loadPlayer();
- 
-         Scanner scanner = new Scanner(System.in);
- 
-         System.out.print("플레이어 ID를 입력하세요: ");
-         String playerId = scanner.nextLine();
-         player = playerService.findPlayerByPlayerId(playerId);
- 
- 
-         displayPlayerStocks(); // 초기 보유 주식 출력
- 
-         // 프로그램 루프
-         boolean running = true;
-         while (running) {
-             System.out.println("\n=== 스칼라 주식 프로그램 메뉴 ===");
-             System.out.println("1. 보유 주식 목록");
-             System.out.println("2. 주식 구매");
-             System.out.println("3. 주식 판매");
-             System.out.println("0. 프로그램 종료");
- 
-             System.out.print("선택: ");
-             int code = scanner.nextInt();
- 
-             switch (code) {
-                 case 1:
-                     displayPlayerStocks();
-                     break;
-                 case 2:
-                     buyStock(scanner);
-                     break;
-                 case 3:
-                     sellStock(scanner);
-                     break;
-                 case 4:
-                     System.out.print("추가할 금액 입력: ");
-                     int addAmount = scanner.nextInt();
-                     if (addAmount > 0) {
-                         player.addMoney(addAmount);
-                         System.out.println("현재 자금: " + player.getPlayerMoney());
-                         playerService.savePlayer(); // 저장
-                     } else {
-                         System.out.println("0보다 큰 금액을 입력하세요.");
-                     }
-                     break;
-                 case 0:
-                     System.out.println("프로그램을 종료합니다...Bye");
-                     running = false;
-                     break;
-                 default:
-                     System.out.println("올바른 번호를 선택하세요.");
-             }
-         }
- 
-         scanner.close();
-     }
+     public SkalaStockMarket() {
+        this.stockService = new StockService();
+        this.playerService = new PlayerService();
+    }
  
      // 2. 플레이어의 보유 주식 목록 출력
      private void displayPlayerStocks() {
@@ -129,7 +77,7 @@ import model.Stock;
                  player.setPlayerMoney(playerMoney - totalCost);
                  player.addStock(new PlayerStock(selectedStock, quantity));
                  System.out.println(quantity + "주를 구매했습니다! 남은 금액: " + player.getPlayerMoney());
-                 playerRepository.savePlayerList(); // 변경 저장
+                 playerService.savePlayer(); // 변경 저장
              } else {
                  System.out.println("ERROR: 금액이 부족합니다.");
              }
@@ -156,12 +104,12 @@ import model.Stock;
                  return;
              }
  
-             Stock baseStock = stockRepository.findStock(playerStock.getStockName());
+             Stock baseStock = stockService.findStockByName(playerStock.getStockName());
              int earnedMoney = baseStock.getStockPrice() * quantity;
              player.setPlayerMoney(player.getPlayerMoney() + earnedMoney);
              playerStock.setStockQuantity(playerStock.getStockQuantity() - quantity);
              player.updatePlayerStock(playerStock);
-             playerRepository.savePlayerList(); // 변경 저장
+             playerService.savePlayer(); // 변경 저장
          } else {
              System.out.println("ERROR: 잘못된 선택입니다.");
          }
@@ -169,28 +117,28 @@ import model.Stock;
  
      // 6. 전체 주식 목록 반환 (외부 접근용)
      public List<Stock> getStocks() {
-         stockRepository.loadStockList();
-         return stockRepository.getStockList();
+         stockService.loadStock();
+         return stockService.getStock();
      }
  
      // 7. 전체 플레이어 목록 반환 (외부 접근용)
      public List<Player> getPlayers() {
-         playerRepository.loadPlayerList();
-         return playerRepository.getPlayerList();
+         playerService.loadPlayer();
+         return playerService.getPlayer();
      }
  
      // 8. 외부 호출용 주식 구매
      public void buyStock(String playerId, String stockName, int quantity) {
-         stockRepository.loadStockList();
-         playerRepository.loadPlayerList();
+         stockService.loadStock();
+         playerService.loadPlayer();
  
-         Player player = playerRepository.findPlayer(playerId);
+         Player player = playerService.findPlayerByPlayerId(playerId);
          if (player == null) {
              System.out.println("존재하지 않는 플레이어입니다.");
              return;
          }
  
-         Stock stock = stockRepository.findStock(stockName);
+         Stock stock = stockService.findStockByName(stockName);
          if (stock == null) {
              System.out.println("존재하지 않는 주식입니다.");
              return;
@@ -200,7 +148,7 @@ import model.Stock;
          if (totalCost <= player.getPlayerMoney()) {
              player.setPlayerMoney(player.getPlayerMoney() - totalCost);
              player.addStock(new PlayerStock(stock, quantity));
-             playerRepository.savePlayerList();
+             playerService.savePlayer();
          } else {
              System.out.println("ERROR: 금액이 부족합니다.");
          }
@@ -208,10 +156,10 @@ import model.Stock;
  
      // 9. 외부 호출용 주식 판매
      public void sellStock(String playerId, String stockName, int quantity) {
-         stockRepository.loadStockList();
-         playerRepository.loadPlayerList();
+         stockService.loadStock();
+         playerService.loadPlayer();
  
-         Player player = playerRepository.findPlayer(playerId);
+         Player player = playerService.findPlayerByPlayerId(playerId);
          if (player == null) {
              System.out.println("존재하지 않는 플레이어입니다.");
              return;
@@ -223,34 +171,34 @@ import model.Stock;
              return;
          }
  
-         Stock baseStock = stockRepository.findStock(stockName);
+         Stock baseStock = stockService.findStockByName(stockName);
          int earnedMoney = baseStock.getStockPrice() * quantity;
          player.setPlayerMoney(player.getPlayerMoney() + earnedMoney);
          playerStock.setStockQuantity(playerStock.getStockQuantity() - quantity);
          player.updatePlayerStock(playerStock);
-         playerRepository.savePlayerList();
+         playerService.savePlayer();
      }
  
      // 10. 플레이어 삭제
      public boolean removePlayer(String id) {
-         return playerRepository.removePlayer(id);
+         return playerService.removePlayer(id);
      }
  
      // 11. 주식 종목 추가
      public void addStock(String name, int price) {
-         stockRepository.loadStockList();
-         stockRepository.addStock(name, price);
+         stockService.loadStock();
+         stockService.addStock(name, price);
      }
 
      // 특정 플레이어 반환
     public Player getPlayerById(String playerId) {
-        playerRepository.loadPlayerList();
-        return playerRepository.findPlayer(playerId);
+        playerService.loadPlayer();
+        return playerService.findPlayerByPlayerId(playerId);
     }
 
     // 저장 메서드 노출
     public void savePlayers() {
-        playerRepository.savePlayerList();
+        playerService.savePlayer();
     }
  }
  
