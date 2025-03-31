@@ -1,3 +1,16 @@
+/*
+ * - 작성자 : 진실
+ * - 작성일 : 2025.03.30
+ * - 수정일 : 2025.03.31
+ * 
+ * <클래스 개요>
+ * 게임 내 플레이어 정보를 관리하는 클래스
+ * 
+ * - 플레이어 ID, 보유 자금, 보유 주식 목록을 관리
+ * - Lombok 어노테이션을 사용하여 getter, setter 및 기본 생성자 자동 생성
+ * - 플레이어는 기본적으로 10,000원의 초기 자금을 가지고 시작
+ * - 다양한 주식을 구매하여 playerStocks 리스트에 보관 가능
+ */
 package com.skala.model;
 
 import lombok.Getter;
@@ -10,87 +23,13 @@ import java.util.ArrayList;
 @Setter
 @NoArgsConstructor
 public class Player {
-    private String playerId;
-    private int playerMoney;
-    private ArrayList<PlayerStock> playerStocks = new ArrayList<>();
+    private String playerId;                            // 플레이어 ID
+    private int playerMoney;                            // 플레이어 자금
+    private ArrayList<PlayerStock> playerStocks = new ArrayList<>();  // 보유 주식 목록
 
+    // 플레이어 ID를 받아 초기 자금으로 생성
     public Player(String id) {
         this.playerId = id;
         this.playerMoney = 10000;
-    }
-
-    public void addMoney(int amount) {
-        if (amount > 0) {
-            this.playerMoney += amount;
-        }
-    }
-
-    public void addStock(PlayerStock stock) {
-        boolean stockExists = false;
-
-        for (PlayerStock existingStock : playerStocks) {
-            if (existingStock.getStockName().equals(stock.getStockName())) {
-                existingStock.setStockPrice(stock.getStockPrice());
-                existingStock.setStockQuantity(existingStock.getStockQuantity() + stock.getStockQuantity());
-                stockExists = true;
-                break;
-            }
-        }
-
-        if (!stockExists) {
-            playerStocks.add(stock);
-        }
-    }
-
-    public void updatePlayerStock(PlayerStock stock) {
-        for (int i = 0; i < playerStocks.size(); i++) {
-            PlayerStock existingStock = playerStocks.get(i);
-            if (existingStock.getStockName().equals(stock.getStockName())) {
-                existingStock.setStockPrice(stock.getStockPrice());
-                existingStock.setStockQuantity(stock.getStockQuantity());
-                if (existingStock.getStockQuantity() == 0) {
-                    playerStocks.remove(i);
-                }
-                break;
-            }
-        }
-    }
-
-    public PlayerStock findStock(int index) {
-        if (index >= 0 && index < playerStocks.size()) {
-            return playerStocks.get(index);
-        }
-        return null;
-    }
-
-    public PlayerStock findStockByName(String stockName) {
-        for (PlayerStock ps : this.playerStocks) {
-            if (ps.getStockName().equals(stockName)) {
-                return ps;
-            }
-        }
-        return null;
-    }
-
-    public String getPlayerStocksForFile() {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < playerStocks.size(); i++) {
-            if (i > 0) {
-                sb.append("|");
-            }
-            sb.append(playerStocks.get(i));
-        }
-        return sb.toString();
-    }
-
-    public String getPlayerStocksForMenu() {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < playerStocks.size(); i++) {
-            sb.append(i + 1);
-            sb.append(". ");
-            sb.append(playerStocks.get(i).toString());
-            sb.append(System.lineSeparator());
-        }
-        return sb.toString();
     }
 }
