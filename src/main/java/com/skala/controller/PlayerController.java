@@ -36,16 +36,21 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag; // Swagger에서 사용되는 경우
+
 @RestController
 @RequestMapping("/api/players")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
+@Tag(name = "Player API", description = "사용자 API입니다.")
 public class PlayerController {
 
    private final PlayerService playerService;
    private final StockService stockService;
    
    // 1. 플레이어 관리: 모든 플레이어 조회
+   @Operation(summary = "모든 플레이어 조회 API", description = "플레이어 관리를 위한 함수로, 모든 플레이어를 조회할 수 있다.")
    @GetMapping
    public ResponseEntity<ResponseDto<List<PlayerResponseDto>>> getAllPlayers() {
        List<Player> players = playerService.getAllPlayers();
