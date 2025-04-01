@@ -1,3 +1,4 @@
+```
 skala-stock-console/
 ├── 📁 app/                     # 애플리케이션 설정 관련 디렉터리
 ├── 📁 build/                   # 빌드 결과물
@@ -40,4 +41,5 @@ skala-stock-console/
 ├── gradlew.bat
 ├── settings.gradle
 └── README.md
+```
 
