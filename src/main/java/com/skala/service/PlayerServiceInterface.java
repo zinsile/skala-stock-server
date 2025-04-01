@@ -17,6 +17,8 @@
 
 package com.skala.service;
 
+import com.skala.dto.request.CreatePlayerRequest;
+import com.skala.dto.response.CreatePlayerResponse;
 import com.skala.model.Player;
 import com.skala.model.PlayerStock;
 import com.skala.model.Stock;
@@ -31,7 +33,7 @@ public interface PlayerServiceInterface {
    Player findPlayerByPlayerId(String id);
    
    // 1. 플레이어 관리: 새 플레이어 생성
-   Player createPlayer(String id);
+   CreatePlayerResponse createPlayer(CreatePlayerRequest request);
    
    // 1. 플레이어 관리: 플레이어 저장
    Player savePlayer(Player player);

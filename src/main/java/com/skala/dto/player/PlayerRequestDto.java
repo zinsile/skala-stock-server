@@ -21,16 +21,7 @@
   */
  public class PlayerRequestDto {
  
-     /**
-      * 플레이어 생성 요청 DTO
-      */
-     @Data
-     @Builder
-     @NoArgsConstructor
-     @AllArgsConstructor
-     public static class CreatePlayer {
-         private String id;
-     }
+    
  
      /**
       * 플레이어 자금 추가 요청 DTO

@@ -21,6 +21,8 @@ package com.skala.controller;
 import com.skala.dto.common.ResponseDto;
 import com.skala.dto.player.PlayerRequestDto;
 import com.skala.dto.player.PlayerResponseDto;
+import com.skala.dto.request.CreatePlayerRequest;
+import com.skala.dto.response.CreatePlayerResponse;
 import com.skala.model.Player;
 import com.skala.model.PlayerStock;
 import com.skala.model.Stock;
@@ -75,15 +77,11 @@ public class PlayerController {
    
    // 1. 플레이어 관리: 새 플레이어 생성
    @PostMapping
-   public ResponseEntity<ResponseDto<PlayerResponseDto>> createPlayer(@RequestBody PlayerRequestDto.CreatePlayer request) {
-       if (playerService.findPlayerByPlayerId(request.getId()) != null) {
-           return ResponseEntity.status(HttpStatus.CONFLICT)
-                   .body(ResponseDto.error("Player already exists"));
-       }
+   public ResponseEntity<CreatePlayerResponse> createPlayer(@RequestBody CreatePlayerRequest request) {
        
-       Player newPlayer = playerService.createPlayer(request.getId());
-       return ResponseEntity.status(HttpStatus.CREATED)
-               .body(ResponseDto.success("Player created successfully", PlayerResponseDto.from(newPlayer)));
+       CreatePlayerResponse newPlayer = playerService.createPlayer(request);
+
+       return ResponseEntity.status(HttpStatus.CREATED).body(newPlayer);
    }
    
    // 1. 플레이어 관리: 플레이어 삭제

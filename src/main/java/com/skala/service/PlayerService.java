@@ -18,6 +18,10 @@
 
 package com.skala.service;
 
+import com.skala.dto.common.ResponseDto;
+import com.skala.dto.player.PlayerResponseDto;
+import com.skala.dto.request.CreatePlayerRequest;
+import com.skala.dto.response.CreatePlayerResponse;
 import com.skala.model.Player;
 import com.skala.model.PlayerStock;
 import com.skala.model.Stock;
@@ -27,6 +31,8 @@ import com.skala.repository.PlayerStockRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,12 +46,6 @@ public class PlayerService implements PlayerServiceInterface {
    
    private final PlayerRepository playerRepository;
    private final PlayerStockRepository playerStockRepository;
-   
-//    @Autowired
-//    public PlayerService(PlayerRepository playerRepository, PlayerStockRepository playerStockRepository) {
-//        this.playerRepository = playerRepository;
-//        this.playerStockRepository = playerStockRepository;
-//    }
 
    // 1. 플레이어 관리: 전체 플레이어 목록 반환
    @Override
@@ -61,10 +61,18 @@ public class PlayerService implements PlayerServiceInterface {
    
    // 1. 플레이어 관리: 새 플레이어 생성
    @Override
-   public Player createPlayer(String id) {
-       Player player = new Player(id);
-       return playerRepository.save(player);
-   }
+   public CreatePlayerResponse createPlayer(CreatePlayerRequest request) {
+    if (findPlayerByPlayerId(request.getPlayerId()) != null) {
+        throw new RuntimeException("Player already exists");
+       }
+
+       //새 플레이어 생성
+       Player player = new Player(request.getPlayerId());
+       player =  playerRepository.save(player);
+
+       return new CreatePlayerResponse(player.getPlayerId());
+    }
+   
 
    // 1. 플레이어 관리: 플레이어 저장
    @Override
