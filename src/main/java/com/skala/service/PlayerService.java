@@ -6,10 +6,11 @@
 * <클래스 개요>
 * 플레이어 관련 비즈니스 로직을 처리하는 서비스 클래스
 * 
-* - PlayerRepository를 통해 데이터 접근
+* - JPA 리포지토리를 통해 데이터 접근
+* - 파일 기반 동작에서 데이터베이스 기반 동작으로 변경
 * - PlayerServiceInterface 구현
 * 
-* 1. 플레이어 관리: 로드, 저장, 조회, 삭제
+* 1. 플레이어 관리: 조회, 생성, 저장, 삭제
 * 2. 자금 관리: 플레이어 자금 추가
 * 3. 주식 관리: 추가, 업데이트, 조회
 * 4. 데이터 변환: 주식 정보를 다양한 형식으로 변환
@@ -21,49 +22,65 @@ import com.skala.model.Player;
 import com.skala.model.PlayerStock;
 import com.skala.model.Stock;
 import com.skala.repository.PlayerRepository;
+import com.skala.repository.PlayerStockRepository;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
+@Transactional
 public class PlayerService implements PlayerServiceInterface {
    
    private final PlayerRepository playerRepository;
+   private final PlayerStockRepository playerStockRepository;
    
-   @Autowired
-   public PlayerService(PlayerRepository playerRepository) {
-       this.playerRepository = playerRepository;
-   }
-
-   // 1. 플레이어 관리: 플레이어 데이터 로드
-   @Override
-   public void loadPlayer() {
-       playerRepository.loadPlayerList();
-   }
+//    @Autowired
+//    public PlayerService(PlayerRepository playerRepository, PlayerStockRepository playerStockRepository) {
+//        this.playerRepository = playerRepository;
+//        this.playerStockRepository = playerStockRepository;
+//    }
 
    // 1. 플레이어 관리: 전체 플레이어 목록 반환
    @Override
-   public List<Player> getPlayer() {
-       return playerRepository.getPlayerList();
+   public List<Player> getAllPlayers() {
+       return playerRepository.findAll();
    }
 
    // 1. 플레이어 관리: ID로 플레이어 조회
    @Override
    public Player findPlayerByPlayerId(String id) {
-       return playerRepository.findPlayer(id);
+       return playerRepository.findByPlayerId(id).orElse(null);
+   }
+   
+   // 1. 플레이어 관리: 새 플레이어 생성
+   @Override
+   public Player createPlayer(String id) {
+       Player player = new Player(id);
+       return playerRepository.save(player);
    }
 
-   // 1. 플레이어 관리: 플레이어 데이터 저장
+   // 1. 플레이어 관리: 플레이어 저장
    @Override
-   public void savePlayer() {
-       playerRepository.savePlayerList();
+   public Player savePlayer(Player player) {
+       return playerRepository.save(player);
    }
 
    // 1. 플레이어 관리: 플레이어 삭제
    @Override
    public boolean removePlayer(String id) {
-       return playerRepository.removePlayer(id);
+       Optional<Player> player = playerRepository.findByPlayerId(id);
+       if (player.isPresent()) {
+           playerRepository.delete(player.get());
+           return true;
+       }
+       return false;
    }
    
    // 2. 자금 관리: 플레이어 자금 추가
@@ -71,85 +88,56 @@ public class PlayerService implements PlayerServiceInterface {
    public void addMoney(Player player, int amount) {
        if (amount > 0) {
            player.setPlayerMoney(player.getPlayerMoney() + amount);
+           playerRepository.save(player);
        }
    }
    
    // 3. 주식 관리: 플레이어에게 주식 추가 (중복 시 수량만 증가)
    @Override
-   public void addStock(Player player, PlayerStock stock) {
-       boolean stockExists = false;
-
-       for (PlayerStock existingStock : player.getPlayerStocks()) {
-           if (existingStock.getStockName().equals(stock.getStockName())) {
-               existingStock.setStockPrice(stock.getStockPrice());
-               existingStock.setStockQuantity(existingStock.getStockQuantity() + stock.getStockQuantity());
-               stockExists = true;
-               break;
-           }
-       }
-
-       if (!stockExists) {
-           player.getPlayerStocks().add(stock);
+   public PlayerStock addStock(Player player, Stock stock, int quantity) {
+       Optional<PlayerStock> existingStockOpt = playerStockRepository.findByPlayerAndStockName(player, stock.getStockName());
+       
+       if (existingStockOpt.isPresent()) {
+           // 이미 보유한 주식이 있으면 수량만 증가
+           PlayerStock existingStock = existingStockOpt.get();
+           existingStock.setStockQuantity(existingStock.getStockQuantity() + quantity);
+           return playerStockRepository.save(existingStock);
+       } else {
+           // 새로운 주식 추가
+           PlayerStock newStock = new PlayerStock(stock, quantity);
+           newStock.setPlayer(player);
+           return playerStockRepository.save(newStock);
        }
    }
    
    // 3. 주식 관리: 플레이어 보유 주식 업데이트 (수량이 0이면 제거)
    @Override
    public void updatePlayerStock(Player player, PlayerStock stock) {
-       for (int i = 0; i < player.getPlayerStocks().size(); i++) {
-           PlayerStock existingStock = player.getPlayerStocks().get(i);
-           if (existingStock.getStockName().equals(stock.getStockName())) {
-               existingStock.setStockPrice(stock.getStockPrice());
-               existingStock.setStockQuantity(stock.getStockQuantity());
-               if (existingStock.getStockQuantity() == 0) {
-                   player.getPlayerStocks().remove(i);
-               }
-               break;
-           }
+       if (stock.getStockQuantity() <= 0) {
+           // 수량이 0 이하면 주식 제거
+           playerStockRepository.delete(stock);
+       } else {
+           // 수량 업데이트
+           playerStockRepository.save(stock);
        }
-   }
-   
-   // 3. 주식 관리: 인덱스로 플레이어 보유 주식 조회
-   @Override
-   public PlayerStock findStock(Player player, int index) {
-       if (index >= 0 && index < player.getPlayerStocks().size()) {
-           return player.getPlayerStocks().get(index);
-       }
-       return null;
    }
    
    // 3. 주식 관리: 이름으로 플레이어 보유 주식 조회
    @Override
    public PlayerStock findStockByName(Player player, String stockName) {
-       for (PlayerStock ps : player.getPlayerStocks()) {
-           if (ps.getStockName().equals(stockName)) {
-               return ps;
-           }
-       }
-       return null;
-   }
-   
-   // 4. 데이터 변환: 파일 저장용 주식 정보 문자열 생성
-   @Override
-   public String getPlayerStocksForFile(Player player) {
-       StringBuilder sb = new StringBuilder();
-       for (int i = 0; i < player.getPlayerStocks().size(); i++) {
-           if (i > 0) {
-               sb.append("|");
-           }
-           sb.append(player.getPlayerStocks().get(i));
-       }
-       return sb.toString();
+       return playerStockRepository.findByPlayerAndStockName(player, stockName).orElse(null);
    }
    
    // 4. 데이터 변환: 메뉴 표시용 주식 정보 문자열 생성
    @Override
    public String getPlayerStocksForMenu(Player player) {
        StringBuilder sb = new StringBuilder();
-       for (int i = 0; i < player.getPlayerStocks().size(); i++) {
+       List<PlayerStock> stocks = playerStockRepository.findByPlayer(player);
+       
+       for (int i = 0; i < stocks.size(); i++) {
            sb.append(i + 1);
            sb.append(". ");
-           sb.append(player.getPlayerStocks().get(i).toString());
+           sb.append(stocks.get(i).toString());
            sb.append(System.lineSeparator());
        }
        return sb.toString();

@@ -4,26 +4,42 @@
  * - 수정일 : 2025.03.31
  * 
  * <클래스 개요>
- * 플레이어가 보유한 주식 정보를 관리하는 클래스
+ * 플레이어가 보유한 주식 정보를 관리하는 엔티티 클래스
  * 
- * - Stock 클래스를 상속받아 주식의 기본 정보(이름, 가격)에 수량 정보를 추가
+ * - 별도의 엔티티로 분리하여 플레이어와 주식간의 관계 표현
+ * - JPA 엔티티 관계 설정 추가
  * - Lombok 어노테이션을 사용하여 getter, setter 및 기본 생성자 자동 생성
- * - 기존 Stock 객체와 수량을 받아 PlayerStock을 생성하는 생성자 제공
- * - 문자열 형태로 주식 정보를 받아 PlayerStock을 생성하는 생성자 제공
- * - toString() 메소드를 오버라이드하여 상위 클래스의 정보와 수량을 포함한 문자열 반환
+ * - 복합키를 사용하여 플레이어별 보유 주식 구분 (playerId + stockName)
+ * - toString() 메소드를 오버라이드하여 주식 정보와 수량을 포함한 문자열 반환
 */
 
 package com.skala.model;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
+@Entity
+@Table(name = "player_stocks")
 @Getter
 @Setter
 @NoArgsConstructor
-public class PlayerStock extends Stock {
-   private int stockQuantity;    // 주식 보유 수량
+public class PlayerStock {
+   
+   @Id
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
+   private Long id;
+
+   @ManyToOne(fetch = FetchType.EAGER)
+   @JoinColumn(name = "player_id")
+   @JsonBackReference
+   private Player player;
+   
+   private String stockName;      // 주식 이름
+   private int stockPrice;        // 주식 가격 (구매 당시)
+   private int stockQuantity;     // 주식 보유 수량
 
    // Stock 객체와 수량을 받아 PlayerStock 생성
    public PlayerStock(Stock stock, int quantity) {
@@ -39,9 +55,9 @@ public class PlayerStock extends Stock {
        this.stockQuantity = Integer.parseInt(quantity);
    }
 
-   // 상위 클래스의 toString()에 수량 정보를 추가하여 반환
+   // 주식 정보와 수량을 포함한 문자열 반환
    @Override
    public String toString() {
-       return super.toString() + ":" + this.stockQuantity;
+       return stockName + ":" + stockPrice + ":" + this.stockQuantity;
    }
 }

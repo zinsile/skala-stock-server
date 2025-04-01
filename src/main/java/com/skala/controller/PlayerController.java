@@ -7,7 +7,7 @@
 * 플레이어와 관련된 API 요청을 처리하는 컨트롤러 클래스
 * 
 * - RESTful API 엔드포인트 제공
-* - PlayerService와 StockService 활용하여 비즈니스 로직 처리
+* - JPA 기반으로 수정된 PlayerService와 StockService 활용
 * 
 * 1. 플레이어 관리: 조회, 생성, 삭제 기능
 * 2. 자금 관리: 플레이어 자금 추가
@@ -22,6 +22,9 @@ import com.skala.model.PlayerStock;
 import com.skala.model.Stock;
 import com.skala.service.PlayerService;
 import com.skala.service.StockService;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,28 +35,27 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/players")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class PlayerController {
 
    private final PlayerService playerService;
    private final StockService stockService;
    
-   @Autowired
-   public PlayerController(PlayerService playerService, StockService stockService) {
-       this.playerService = playerService;
-       this.stockService = stockService;
-   }
+//    @Autowired
+//    public PlayerController(PlayerService playerService, StockService stockService) {
+//        this.playerService = playerService;
+//        this.stockService = stockService;
+//    }
    
    // 1. 플레이어 관리: 모든 플레이어 조회
    @GetMapping
    public List<Player> getAllPlayers() {
-       playerService.loadPlayer();
-       return playerService.getPlayer();
+       return playerService.getAllPlayers();
    }
    
    // 1. 플레이어 관리: ID로 플레이어 조회
    @GetMapping("/{id}")
    public ResponseEntity<Player> getPlayerById(@PathVariable String id) {
-       playerService.loadPlayer();
        Player player = playerService.findPlayerByPlayerId(id);
        if (player != null) {
            return new ResponseEntity<>(player, HttpStatus.OK);
@@ -65,14 +67,11 @@ public class PlayerController {
    // 1. 플레이어 관리: 새 플레이어 생성
    @PostMapping
    public ResponseEntity<Player> createPlayer(@RequestParam String id) {
-       playerService.loadPlayer();
        if (playerService.findPlayerByPlayerId(id) != null) {
            return new ResponseEntity<>(HttpStatus.CONFLICT); // 이미 존재하는 플레이어
        }
        
-       Player newPlayer = new Player(id);
-       playerService.getPlayer().add(newPlayer);
-       playerService.savePlayer();
+       Player newPlayer = playerService.createPlayer(id);
        return new ResponseEntity<>(newPlayer, HttpStatus.CREATED);
    }
    
@@ -93,12 +92,10 @@ public class PlayerController {
            @PathVariable String id,
            @RequestParam int amount) {
        
-       playerService.loadPlayer();
        Player playerObj = playerService.findPlayerByPlayerId(id);
        
        if (playerObj != null) {
            playerService.addMoney(playerObj, amount);
-           playerService.savePlayer();
            return new ResponseEntity<>("Money added successfully", HttpStatus.OK);
        } else {
            return new ResponseEntity<>("Player not found", HttpStatus.NOT_FOUND);
@@ -111,9 +108,6 @@ public class PlayerController {
            @PathVariable String playerId,
            @RequestParam String stockName,
            @RequestParam int quantity) {
-       
-       stockService.loadStock();
-       playerService.loadPlayer();
        
        Player playerObj = playerService.findPlayerByPlayerId(playerId);
        if (playerObj == null) {
@@ -128,8 +122,8 @@ public class PlayerController {
        int totalCost = stockObj.getStockPrice() * quantity;
        if (totalCost <= playerObj.getPlayerMoney()) {
            playerObj.setPlayerMoney(playerObj.getPlayerMoney() - totalCost);
-           playerService.addStock(playerObj, new PlayerStock(stockObj, quantity));
-           playerService.savePlayer();
+           playerService.addStock(playerObj, stockObj, quantity);
+           playerService.savePlayer(playerObj);
            return new ResponseEntity<>("Success", HttpStatus.OK);
        } else {
            return new ResponseEntity<>("Insufficient funds", HttpStatus.BAD_REQUEST);
@@ -142,9 +136,6 @@ public class PlayerController {
            @PathVariable String playerId,
            @RequestParam String stockName,
            @RequestParam int quantity) {
-       
-       stockService.loadStock();
-       playerService.loadPlayer();
        
        Player playerObj = playerService.findPlayerByPlayerId(playerId);
        if (playerObj == null) {
@@ -161,7 +152,7 @@ public class PlayerController {
        playerObj.setPlayerMoney(playerObj.getPlayerMoney() + earnedMoney);
        playerStock.setStockQuantity(playerStock.getStockQuantity() - quantity);
        playerService.updatePlayerStock(playerObj, playerStock);
-       playerService.savePlayer();
+       playerService.savePlayer(playerObj);
        
        return new ResponseEntity<>("Success", HttpStatus.OK);
    }
@@ -169,7 +160,6 @@ public class PlayerController {
    // 4. 주식 정보: 플레이어 보유 주식 조회
    @GetMapping("/{playerId}/stocks")
    public ResponseEntity<List<PlayerStock>> getPlayerStocks(@PathVariable String playerId) {
-       playerService.loadPlayer();
        Player player = playerService.findPlayerByPlayerId(playerId);
        
        if (player != null) {
@@ -182,7 +172,6 @@ public class PlayerController {
    // 4. 주식 정보: 메뉴 형식으로 플레이어 보유 주식 조회
    @GetMapping("/{playerId}/stocks/menu")
    public ResponseEntity<String> getPlayerStocksMenu(@PathVariable String playerId) {
-       playerService.loadPlayer();
        Player player = playerService.findPlayerByPlayerId(playerId);
        
        if (player != null) {
