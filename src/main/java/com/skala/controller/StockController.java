@@ -1,13 +1,14 @@
 /*
 * - 작성자 : 진실
 * - 작성일 : 2025.03.30
-* - 수정일 : 2025.03.31
+* - 수정일 : 2025.04.01
 * 
 * <클래스 개요>
 * 주식과 관련된 API 요청을 처리하는 컨트롤러 클래스
 * 
 * - RESTful API 엔드포인트 제공
 * - JPA 기반으로 수정된 StockService 활용
+* - DTO를 사용하여 계층 간 데이터 전송 구조화
 * 
 * 1. 주식 조회: 전체 주식 목록 및 특정 주식 조회
 * 2. 주식 관리: 새 주식 추가, 가격 업데이트
@@ -16,80 +17,89 @@
 
 package com.skala.controller;
 
+import com.skala.dto.common.ResponseDto;
+import com.skala.dto.stock.StockRequestDto;
+import com.skala.dto.stock.StockResponseDto;
 import com.skala.model.Stock;
 import com.skala.service.StockService;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/stocks")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class StockController {
 
    private final StockService stockService;
    
-   @Autowired
-   public StockController(StockService stockService) {
-       this.stockService = stockService;
-   }
-   
    // 1. 주식 조회: 모든 주식 조회
    @GetMapping
-   public List<Stock> getAllStocks() {
-       return stockService.getAllStocks();
+   public ResponseEntity<ResponseDto<List<StockResponseDto>>> getAllStocks() {
+       List<Stock> stocks = stockService.getAllStocks();
+       List<StockResponseDto> stockDtos = stocks.stream()
+           .map(StockResponseDto::from)
+           .collect(Collectors.toList());
+           
+       return ResponseEntity.ok(ResponseDto.success(stockDtos));
    }
    
    // 1. 주식 조회: 이름으로 주식 조회
    @GetMapping("/{name}")
-   public ResponseEntity<Stock> getStockByName(@PathVariable String name) {
+   public ResponseEntity<ResponseDto<StockResponseDto>> getStockByName(@PathVariable String name) {
        Stock stock = stockService.findStockByName(name);
        
        if (stock != null) {
-           return new ResponseEntity<>(stock, HttpStatus.OK);
+           return ResponseEntity.ok(ResponseDto.success(StockResponseDto.from(stock)));
        } else {
-           return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+           return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                   .body(ResponseDto.error("Stock not found"));
        }
    }
    
    // 2. 주식 관리: 새 주식 추가
    @PostMapping
-   public ResponseEntity<Stock> addStock(
-           @RequestParam String name,
-           @RequestParam int price) {
-       
-       Stock existingStock = stockService.findStockByName(name);
+   public ResponseEntity<ResponseDto<StockResponseDto>> addStock(@RequestBody StockRequestDto.CreateStock request) {
+       Stock existingStock = stockService.findStockByName(request.getName());
        
        if (existingStock != null) {
-           return new ResponseEntity<>(HttpStatus.CONFLICT); // 이미 존재하는 주식
+           return ResponseEntity.status(HttpStatus.CONFLICT)
+                   .body(ResponseDto.error("Stock already exists"));
        }
        
-       Stock newStock = stockService.addStock(name, price);
-       return new ResponseEntity<>(newStock, HttpStatus.CREATED);
+       Stock newStock = stockService.addStock(request.getName(), request.getPrice());
+       return ResponseEntity.status(HttpStatus.CREATED)
+               .body(ResponseDto.success("Stock created successfully", StockResponseDto.from(newStock)));
    }
    
    // 2. 주식 관리: 주식 가격 업데이트
    @PutMapping("/{name}")
-   public ResponseEntity<Stock> updateStockPrice(
+   public ResponseEntity<ResponseDto<StockResponseDto>> updateStockPrice(
            @PathVariable String name,
-           @RequestParam int price) {
+           @RequestBody StockRequestDto.UpdatePrice request) {
        
-       Stock updatedStock = stockService.updateStockPrice(name, price);
+       Stock updatedStock = stockService.updateStockPrice(name, request.getPrice());
        
        if (updatedStock != null) {
-           return new ResponseEntity<>(updatedStock, HttpStatus.OK);
+           return ResponseEntity.ok(ResponseDto.success("Stock price updated successfully", 
+                   StockResponseDto.from(updatedStock)));
        } else {
-           return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+           return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                   .body(ResponseDto.error("Stock not found"));
        }
    }
    
    // 3. 메뉴 형식: 메뉴 표시용 주식 목록 조회
    @GetMapping("/menu")
-   public ResponseEntity<String> getStockListForMenu() {
+   public ResponseEntity<ResponseDto<String>> getStockListForMenu() {
        String menuText = stockService.getStockListForMenu();
-       return new ResponseEntity<>(menuText, HttpStatus.OK);
+       return ResponseEntity.ok(ResponseDto.success(menuText));
    }
 }
