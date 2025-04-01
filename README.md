@@ -84,18 +84,19 @@ src
 ### 백엔딩
 ```bash
 # 프로젝트 클론하기
-git clone https://github.com/username/skala-stock-market.git
-cd skala-stock-market
+git clone https://github.com/username/skala-stock-server.git
+cd skala-stock-server
 
 # 백엔딩 빌드 및 실행
-./gradlew bootRun
+gradlew bootRun # (window)
+./gradlew bootRun # (window)
 # 또는 IDE에서 App.java 실행
 ```
 
 ### 프론트엔딩
 ```bash
 # Vue.js 프로젝트 디렉토리로 이동
-cd frontend
+git clone ~
 
 # 의종성 설치
 npm install
@@ -166,7 +167,7 @@ GET  /api/stocks/menu        - 메뉴 표시용 주식 목록 조회
 
 애플리케이션 시작 시 다음과 같은 기본 주식 데이터가 초기화됩니다:
 
-- **SKALA** (250000- **SKALA** (250000\u원)
-- **Tesla** (350000- **Tesla** (350000\u원)
-- **Samsung** (150000- **Samsung** (150000\u원)
+- **SKALA** (250000원)
+- **Tesla** (350000원)
+- **Samsung** (150000원)
 
