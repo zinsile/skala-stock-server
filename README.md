@@ -49,6 +49,15 @@ com.skala
 ├── controller
 │   ├── PlayerController.java
 │   └── StockController.java
+├── dto
+│   ├── common
+│   │   └── ResponseDto.java
+│   ├── player
+│   │   ├── PlayerRequestDto.java
+│   │   └── PlayerResponseDto.java
+│   └── stock
+│       ├── StockRequestDto.java
+│       └── StockResponseDto.java
 ├── model
 │   ├── Player.java
 │   ├── PlayerStock.java
@@ -141,19 +150,19 @@ GET  /api/stocks/menu        - 메뉴 표시용 주식 목록 조회
 이 프로젝트는 **H2 인메리 데이터베이스**를 사용하며, 다음과 같은 테이블 구조를 가진다:
 
 ### players 테이블
-| 컨셌트 | 설명 |
+| 속성 | 설명 |
 |-----------|--------|
 | `player_id (PK)` | 플레이어 ID |
 | `player_money`   | 플레이어 보유 자금 |
 
 ### stocks 테이블
-| 컨셌트 | 설명 |
+| 속성 | 설명 |
 |-----------|--------|
 | `stock_name (PK)` | 주식 이름 |
 | `stock_price`     | 주식 현재 가격 |
 
 ### player_stocks 테이블
-| 컨셌트 | 설명 |
+| 속성 | 설명 |
 |-----------|--------|
 | `id (PK)`            | 자동 생성 ID |
 | `player_id (FK)`     | 플레이어 ID 참조 |
