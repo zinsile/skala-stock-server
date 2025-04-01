@@ -71,7 +71,7 @@ SKALA-STOCK-CONSOLE/
 
 ## 설치 및 실행 방법
 
-### 1. 프로젝트 클론
+### 1. 프로젝트 clone
 ```bash
 git clone https://github.com/username/SKALA-STOCK-CONSOLE.git
 ```
