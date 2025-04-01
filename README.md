@@ -89,7 +89,7 @@ cd skala-stock-server
 
 # 백엔딩 빌드 및 실행
 gradlew bootRun # (window)
-./gradlew bootRun # (window)
+./gradlew bootRun # (mac)
 # 또는 IDE에서 App.java 실행
 ```
 
