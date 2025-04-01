@@ -30,6 +30,7 @@ Skala 주식 거래 시뮬레이션은 사용자가 가상의 주식을 사고 �
 - H2 Database
 - Jakarta Persistence API
 - Lombok
+- swagger 2.2.0
 
 ### 프론트엔드
 - Vue.js 3
