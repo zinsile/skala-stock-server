@@ -1,6 +1,6 @@
-# Skala 주식 가능 가규 가규 시뮬리언
+# Skala 주식 거래 시뮬레이션
 
-Skala 주식 가능 가규 시뮬리언은 사용자가 가스의 주식을 살고 팔면서 투자 전력을 열심히 연습할 수 있는 웹 애플리케이션입니다.
+Skala 주식 거래 시뮬레이션은 사용자가 가상의 주식을 사고 팔며 투자 전략을 연습할 수 있는 웹 애플리케이션입니다.
 
 이 프로젝트는 **Spring Boot 백엔딩** 과 **Vue.js 프론트엔딩** 구조로 구성되어 있습니다.
 
@@ -89,7 +89,7 @@ cd skala-stock-server
 
 # 백엔딩 빌드 및 실행
 gradlew bootRun # (window)
-./gradlew bootRun # (window)
+./gradlew bootRun # (mac)
 # 또는 IDE에서 App.java 실행
 ```
 
