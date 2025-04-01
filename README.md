@@ -121,6 +121,10 @@ http://localhost:5173/
 
 ## API 엔드포인트
 
+- swagger를 통한 API 명세
+http://localhost:8080/swagger-ui/index.html
+(본인 로컬호스트로 들어가면 됌)
+
 ### 플레이어 관리
 ```
 GET    /api/players                         - 모든 플레이어 조회
