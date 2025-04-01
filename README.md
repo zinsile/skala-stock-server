@@ -96,7 +96,7 @@ src
 git clone https://github.com/username/skala-stock-server.git
 cd skala-stock-server
 
-# 백엔딩 빌드 및 실행
+# 백엔드 빌드 및 실행
 gradlew bootRun # (window)
 ./gradlew bootRun # (mac)
 # 또는 IDE에서 App.java 실행
@@ -107,7 +107,7 @@ gradlew bootRun # (window)
 # Vue.js 프로젝트 디렉토리로 이동
 git clone ~
 
-# 의종성 설치
+# 의존성 설치
 npm install
 
 # 개발 서버 실행
@@ -151,7 +151,7 @@ GET  /api/stocks/menu        - 메뉴 표시용 주식 목록 조회
 
 ## 데이터베이스 구조
 
-이 프로젝트는 **H2 인메리 데이터베이스**를 사용하며, 다음과 같은 테이블 구조를 가진다:
+이 프로젝트는 **H2 인메모리 데이터베이스**를 사용하며, 다음과 같은 테이블 구조를 가진다:
 
 ### players 테이블
 | 속성 | 설명 |
