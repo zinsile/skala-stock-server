@@ -23,7 +23,7 @@ Skala 주식 거래 시뮬레이션은 사용자가 가상의 주식을 사고 �
 
 ## 기술 스택
 
-### 백엔딩
+### 백엔드
 - Java 21
 - Spring Boot 3.2.3
 - Spring Data JPA
@@ -31,7 +31,7 @@ Skala 주식 거래 시뮬레이션은 사용자가 가상의 주식을 사고 �
 - Jakarta Persistence API
 - Lombok
 
-### 프론트엔딩
+### 프론트엔드
 - Vue.js 3
 - Axios
 - CSS (컨퍼런트 스타일링)
@@ -40,7 +40,7 @@ Skala 주식 거래 시뮬레이션은 사용자가 가상의 주식을 사고 �
 
 ## 프로젝트 구조
 
-### 백엔딩 구조
+### 백엔드 구조
 ```plaintext
 com.skala
 ├── config
@@ -74,7 +74,7 @@ com.skala
 └── App.java
 ```
 
-### 프론트엔딩 구조
+### 프론트엔드 구조
 ```plaintext
 src
 ├── assets
@@ -90,7 +90,7 @@ src
 
 ## 설치 및 실행 방법
 
-### 백엔딩
+### 백엔드
 ```bash
 # 프로젝트 클론하기
 git clone https://github.com/username/skala-stock-server.git
@@ -102,7 +102,7 @@ gradlew bootRun # (window)
 # 또는 IDE에서 App.java 실행
 ```
 
-### 프론트엔딩
+### 프론트엔드
 ```bash
 # Vue.js 프로젝트 디렉토리로 이동
 git clone ~
