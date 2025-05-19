@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sk056-skala-stock-server
+  namespace: skala-practice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sk056-skala-stock-server
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '8081'
+        prometheus.io/path: '/actuator/prometheus'
+        update: 1ae2adf933c27354a572ce4c738d013f
+      labels:
+        app: sk056-skala-stock-server
+    spec:
+      serviceAccountName: default
+      containers:
+        - name: sk056-skala-stock-server
+          image: amdp-registry.skala-ai.com/skala25a/sk056-skala-stock-server:1.0.0
+          imagePullPolicy: Always
+          env:
+            - name: USER_NAME
+              value: sk034
+            - name: NAMESPACE
+              value: skala-practice
+            - name: SPRING_PROFILES_ACTIVE
+              value: local
+          envFrom:
+            - secretRef:
+                name: my-app-secrets
+
