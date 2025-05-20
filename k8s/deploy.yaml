@@ -21,7 +21,7 @@ spec:
       serviceAccountName: default
       containers:
         - name: sk056-skala-stock-server
-          image: amdp-registry.skala-ai.com/skala25a/sk056-skala-stock-server:1.0.0
+        image: amdp-registry.skala-ai.com/skala25a/sk056-skala-stock-server:2.0.0-1-5c7651dc9cbe
           imagePullPolicy: Always
           env:
             - name: USER_NAME
