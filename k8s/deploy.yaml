@@ -25,7 +25,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: USER_NAME
-              value: sk034
+              value: sk056
             - name: NAMESPACE
               value: skala-practice
             - name: SPRING_PROFILES_ACTIVE
